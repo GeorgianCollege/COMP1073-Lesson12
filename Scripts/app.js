@@ -22,27 +22,30 @@
     });
 
     //CreateJS Section ++++++++++++++++++++++++++++++++++++
-    var stage;
-    var canvas;
     
+    //global variables
+    
+    // reference to canvas element
+    var canvas = document.getElementById("canvas");
+    // create a stage container object
+    var stage = new createjs.Stage(canvas);
+
+
     function init() {
         console.log("Initialization");
-        // reference to canvas element
-        canvas = document.getElementById("canvas");
-        // create a stage container object
-        stage = new createjs.Stage(canvas);
+        
         // set frame rate to 60 fps
         createjs.Ticker.setFPS(60);
         // listen for frame changes and call the animationLoop function
         createjs.Ticker.addEventListener("tick", animationLoop);
     }
-    
+
     // runs every frame
     function animationLoop() {
         // refresh the stage object
         stage.update();
     }
-    
+
     window.onload = init;
 
 
