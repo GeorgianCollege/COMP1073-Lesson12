@@ -24,12 +24,13 @@
     //CreateJS Section ++++++++++++++++++++++++++++++++++++
 
     //global variables
-    var screenWidth = window.innerWidth * 0.8;
+    var screenWidth = 250;
+    var screenHeight = 250;
 
     // reference to canvas element
     var canvas = document.getElementById("canvas");
-    canvas.setAttribute("width", screenWidth);
-    canvas.setAttribute("height", "480");
+    canvas.setAttribute("width", screenWidth.toString());
+    canvas.setAttribute("height", screenHeight.toString());
 
     // create a stage container object
     var stage = new createjs.Stage(canvas);
@@ -39,16 +40,17 @@
 
     var button = null;
     var buttonMove = 5;
+    var buttonIsGrowing = true;
 
     function init() {
         console.log("Initialization");
         // enable mouseover effects for all buttons
         stage.enableMouseOver(20);
-        
+
         // set frame rate to 60 fps
-        createjs.Ticker.setFPS(60);
+        createjs.Ticker.framerate = 60;
         // listen for frame changes and call the animationLoop function
-        createjs.Ticker.addEventListener("tick", animationLoop);
+        createjs.Ticker.on("tick", animationLoop);
 
         // call the main function
         main();
@@ -61,6 +63,25 @@
         button.rotation += 5;
         helloLabel.x += helloLabelMove;
         button.x += buttonMove;
+
+        if (buttonIsGrowing) {
+            if (button.scaleX < 1) {
+                button.scaleX *= 1.1;
+                button.scaleY *= 1.1;
+            }
+            else {
+                buttonIsGrowing = false;
+            }
+        } else {
+            if(button.scaleX >= 0.1) {
+                button.scaleX *= 0.9;
+                button.scaleY *= 0.9;
+            }
+            else {
+                buttonIsGrowing = true;
+            }
+        }
+
         if ((helloLabel.x >= screenWidth) || (helloLabel.x <= 0)) {
             helloLabelMove *= -1;
             buttonMove *= -1;
@@ -75,29 +96,34 @@
         button = new createjs.Bitmap('../Assets/images/button.jpg');
         button.regX = button.getBounds().width * 0.5;
         button.regY = button.getBounds().height * 0.5;
-        button.scaleX = 0.5;
-        button.scaleY = 0.5;
+        button.scaleX = 0.3;
+        button.scaleY = 0.3;
         button.x = screenWidth * 0.5;
-        button.y = 240;
+        button.y = screenHeight * 0.5;
         stage.addChild(button);
 
-        helloLabel = new createjs.Text("Hello World!", "40px Consolas", "#000000");
+        helloLabel = new createjs.Text("Hello World!", "30px Consolas", "#000000");
         helloLabel.regX = helloLabel.getMeasuredWidth() * 0.5;
         helloLabel.regY = helloLabel.getMeasuredHeight() * 0.5;
         helloLabel.x = screenWidth * 0.5;
-        helloLabel.y = 240;
+        helloLabel.y = screenHeight * 0.5;
         stage.addChild(helloLabel);
 
         button.on("click", function() {
-            helloLabel.text = "Clicked!";
+            if(helloLabel.text === "Clicked!") {
+                helloLabel.text = "Hello World!";
+            } else {
+                helloLabel.text = "Clicked!";
+            }
+            
             helloLabel.regX = helloLabel.getMeasuredWidth() * 0.5;
             helloLabel.regY = helloLabel.getMeasuredHeight() * 0.5;
         });
-        
+
         button.on('mouseover', function() {
             button.alpha = 0.5;
         })
-        
+
         button.on('mouseout', function() {
             button.alpha = 1;
         })
